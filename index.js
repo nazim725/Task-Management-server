@@ -21,6 +21,7 @@ async function run() {
         // console.log("connected database")
         const database = client.db("Task-Manager");
         const taskCollection = database.collection("tasks");
+        const subTaskCollection = database.collection("subTasks");
 
         // save task to database
         app.post('/tasks', async (req, res) => {
@@ -30,15 +31,23 @@ async function run() {
             res.json(result)
 
         });
+        // save task to database
+        app.post('/subTasks', async (req, res) => {
+            const task = req.body;
+            console.log(req.body)
+            const result = await subTaskCollection.insertOne(task)
+            res.json(result)
+
+        });
 
         // get all tasks
-        app.get('/tasks', async (req, res) => {
-            const cursor = taskCollection.find({});
+        app.get('/subTasks', async (req, res) => {
+            const cursor = subTaskCollection.find({});
             const task = await cursor.toArray();
             res.send(task);
         });
 
-        app.put('/tasks/:id', async (req, res) => {
+        app.put('/subTasks/:id', async (req, res) => {
             const id = req.params.id;
             console.log('updating', id)
             const updatedStatus = req.body;
@@ -46,13 +55,22 @@ async function run() {
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updateDoc = { $set: { status: updatedStatus.status } };
-            const result = await taskCollection.updateOne(filter, updateDoc, options)
+            const result = await subTaskCollection.updateOne(filter, updateDoc, options)
             res.json(result)
 
 
         });
 
-       
+        // get a single data from services database
+        app.get('/tasks/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('getting specific service', id);
+            const query = { _id: ObjectId(id) };
+            const task = await taskCollection.findOne(query);
+            res.json(task);
+        });
+
+
 
 
 
