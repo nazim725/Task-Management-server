@@ -44,13 +44,13 @@ async function run() {
         app.get('/subTasks', async (req, res) => {
             const cursor = subTaskCollection.find({});
             const task = await cursor.toArray();
-            res.send(task);
+            res.json(task);
         });
         // get all tasks
         app.get('/tasks', async (req, res) => {
             const cursor = taskCollection.find({});
             const task = await cursor.toArray();
-            res.send(task);
+            res.json(task);
         });
 
         app.put('/subTasks/:id', async (req, res) => {
